@@ -1,4 +1,27 @@
-﻿using System;
+﻿/*  This program simulates fractional Gaussian noise or fractional          */
+/*  Brownian motion using the Hosking method.                               */
+
+/*  Reference:                                                              */
+/*  J.R.M. Hosking (1984),                                                  */
+/*  Modeling persistence in hydrological time series using fractional       */
+/*  brownian differencing,                                                  */
+/*  Water Resources Research, Vol. 20, pp. 1898--1908.                      */
+
+/*  Copyright Ton Dieker                                                    */
+/*  Centre of Mathematics and Computer Science (CWI) Amsterdam              */
+/*  April 2002                                                              */
+
+/*  ton@cwi.nl                                                              */
+
+/*
+ * The below C# code is a port of the C source code from:
+ * 
+ *    http://www.columbia.edu/~ad3217/fbm/hosking.c
+ *    
+ * Colin Green, 2020
+ */
+
+using System;
 using Redzen.Numerics.Distributions;
 using Redzen.Numerics.Distributions.Double;
 using Redzen.Random;
@@ -33,18 +56,8 @@ namespace FractionalBrownianMotion
         /// <param name="h">The Hurst parameter of the trace.</param>
         /// <param name="l">The sample is generated on [0,L].</param>
         public HoskingMethod(int n, double h, double l)
-        {
-            _m = 1 << n;  // m = 2^n
-            _h = h;
-            _l = l;
-            _scaling = Math.Pow(_l / _m, h);
-
-            _phi = new double[_m];
-            _psi = new double[_m];
-            _cov = new double[_m];
-
-            _gaussian = new ZigguratGaussianSampler();
-        }
+            : this(n, h, l, RandomDefaults.GetSeed())
+        {}
 
         /// <summary>
         /// Construct with the provided Hosking method arguments, and a random seed.
@@ -62,6 +75,7 @@ namespace FractionalBrownianMotion
             _phi = new double[_m];
             _psi = new double[_m];
             _cov = new double[_m];
+            InitCovariance(_cov, _h);
 
             _gaussian = new ZigguratGaussianSampler(0.0, 1.0, RandomDefaults.CreateRandomSource(seed));
         }
@@ -71,10 +85,10 @@ namespace FractionalBrownianMotion
         #region Public Methods
 
         /// <summary>
-        /// Generates a set of fractional Brownian noise samples using the Hosking method.      
+        /// Generates a set of fractional Brownian noise samples using the Hosking method.
         /// </summary>
         /// <param name="output">An array to fill with samples.</param>
-        public void Sample(double[] output)
+        public void SampleNoise(double[] output)
         {           
             if(output.Length != _m) throw new ArgumentException("Invalid length");
 
@@ -82,9 +96,6 @@ namespace FractionalBrownianMotion
             output[0] = _gaussian.Sample();
             double v = 1;
             _phi[0] = 0.0;
-            for(int i=0; i < _m; i++) {
-                _cov[i] = Covariance(i, _h);
-            }
 
             // Simulation.
             for(int i=1; i < _m; i++) 
@@ -110,9 +121,22 @@ namespace FractionalBrownianMotion
                 output[i] += Math.Sqrt(v) * _gaussian.Sample();
             }
 
-            // Rescale to obtain a sample of size 2^(*n) on [0,L].
+            // Rescale to obtain a sample of size 2^n on [0,L].
             for(int i=0; i < _m; i++) {
-                output[i] = _scaling * (output[i]);
+                output[i] *= _scaling;
+            }
+        }
+
+        /// <summary>
+        /// Generates a set of fractional Brownian motion samples using the Hosking method.
+        /// </summary>
+        /// <param name="output">An array to fill with samples.</param>
+        public void SampleMotion(double[] output)
+        {
+            SampleNoise(output);
+
+            for(int i=1; i < output.Length; i++) {
+                output[i] += output[i-1];
             }
         }
 
@@ -120,10 +144,13 @@ namespace FractionalBrownianMotion
 
         #region Private Static Methods
 
-        private static double Covariance(long i, double h) 
+        private static void InitCovariance(double[] cov, double h)
         {
-            if (i == 0) return 1.0;
-            else return (Math.Pow(i-1, 2.0*h) - (2.0 * Math.Pow(i, 2.0*h)) + Math.Pow(i+1, 2.0*h)) / 2.0;
+            cov[0] = 1.0;
+
+            for(int i=1; i < cov.Length; i++) {
+                cov[i] = (Math.Pow(i-1, 2.0*h) - (2.0 * Math.Pow(i, 2.0*h)) + Math.Pow(i+1, 2.0*h)) / 2.0;
+            }
         }
 
         #endregion
