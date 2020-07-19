@@ -27,11 +27,11 @@ namespace FractionalBrownianMotion
         #region Constructors
 
         /// <summary>
-        /// 
+        /// Construct with the provided Hosking method arguments.
         /// </summary>
-        /// <param name="n">Determines the sample size N by N=2^(*n)</param>
-        /// <param name="h">The Hurst parameter of the trace</param>
-        /// <param name="l">The sample is generated on [0,L]</param>
+        /// <param name="n">Determines the sample size N by N=2^n</param>
+        /// <param name="h">The Hurst parameter of the trace.</param>
+        /// <param name="l">The sample is generated on [0,L].</param>
         public HoskingMethod(int n, double h, double l)
         {
             _m = 1 << n;  // m = 2^n
@@ -46,6 +46,12 @@ namespace FractionalBrownianMotion
             _gaussian = new ZigguratGaussianSampler();
         }
 
+        /// <summary>
+        /// Construct with the provided Hosking method arguments, and a random seed.
+        /// </summary>
+        /// <param name="n">Determines the sample size N by N=2^n</param>
+        /// <param name="h">The Hurst parameter of the trace.</param>
+        /// <param name="l">The sample is generated on [0,L].</param>
         public HoskingMethod(int n, double h, double l, ulong seed)
         {
             _m = 1 << n;  // m = 2^n
@@ -75,9 +81,10 @@ namespace FractionalBrownianMotion
             // Initialization.
             output[0] = _gaussian.Sample();
             double v = 1;
-            _phi[0] = 0;
-            for(int i=0; i < _m; i++)
-            _cov[i] = Covariance(i, _h);
+            _phi[0] = 0.0;
+            for(int i=0; i < _m; i++) {
+                _cov[i] = Covariance(i, _h);
+            }
 
             // Simulation.
             for(int i=1; i < _m; i++) 
@@ -113,10 +120,10 @@ namespace FractionalBrownianMotion
 
         #region Private Static Methods
 
-        private static double Covariance(long i, double H) 
+        private static double Covariance(long i, double h) 
         {
-            if (i == 0) return 1;
-            else return (Math.Pow(i-1, 2.0*H) - 2*Math.Pow(i, 2.0*H) + Math.Pow(i+1, 2.0*H)) / 2.0;
+            if (i == 0) return 1.0;
+            else return (Math.Pow(i-1, 2.0*h) - (2.0 * Math.Pow(i, 2.0*h)) + Math.Pow(i+1, 2.0*h)) / 2.0;
         }
 
         #endregion
