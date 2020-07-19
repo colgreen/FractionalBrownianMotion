@@ -47,6 +47,12 @@ namespace FractionalBrownianMotion
 
         #endregion
 
+        #region Auto Properties
+
+        public int OutputLength => _m;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -109,10 +115,10 @@ namespace FractionalBrownianMotion
 
                 _phi[i-1] /= v;
                 for(int j=0; j < i-1; j++) {
-                    _phi[j] = _psi[j] - _phi[i-1] * _psi[i-j-2];
+                    _phi[j] = _psi[j] - (_phi[i-1] * _psi[i-j-2]);
                 }
 
-                v *= (1 - _phi[i-1] * _phi[i-1]);
+                v *= (1.0 - (_phi[i-1] * _phi[i-1]));
     
                 output[i] = 0.0;
                 for(int j=0; j < i; j++) {

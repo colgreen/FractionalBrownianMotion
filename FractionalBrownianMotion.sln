@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractionalBrownianMotion", "FractionalBrownianMotion\FractionalBrownianMotion.csproj", "{74B7CCB4-D0E4-44DE-AF49-B2CEC4260A46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FractionalBrownianMotion", "FractionalBrownianMotion\FractionalBrownianMotion.csproj", "{74B7CCB4-D0E4-44DE-AF49-B2CEC4260A46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractionalBrownianMotion.Tests", "FractionalBrownianMotion.Tests\FractionalBrownianMotion.Tests.csproj", "{73D830E3-C63E-4F4C-9C9D-23D77F83EAA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{74B7CCB4-D0E4-44DE-AF49-B2CEC4260A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74B7CCB4-D0E4-44DE-AF49-B2CEC4260A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74B7CCB4-D0E4-44DE-AF49-B2CEC4260A46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73D830E3-C63E-4F4C-9C9D-23D77F83EAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D830E3-C63E-4F4C-9C9D-23D77F83EAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D830E3-C63E-4F4C-9C9D-23D77F83EAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D830E3-C63E-4F4C-9C9D-23D77F83EAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
