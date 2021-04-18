@@ -12,12 +12,6 @@ namespace FractionalBrownianMotion.Tests
 
             var data = new double[hosking.OutputLength];
             hosking.SampleNoise(data);
-
-
-
-
-
-            
         }
     }
 }
